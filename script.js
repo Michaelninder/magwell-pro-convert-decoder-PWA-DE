@@ -4,6 +4,10 @@ const tabs = document.querySelectorAll('.tab');
 const tabButtons = document.querySelectorAll('.tabs-navigation button');
 const sourceCards = document.querySelectorAll('.source-card');
 const pingButton = document.getElementById('ping-button');
+const loginModal = document.getElementById('login-modal');
+const loginForm = document.getElementById('login-form');
+const loginError = document.getElementById('login-error');
+const logoutButton = document.getElementById('logout-button');
 
 const API_baseURL = "http://192.168.2.14/mwapi";
 const API_statusCodesMap = {
@@ -51,6 +55,55 @@ const API_statusCodesMap = {
     41: "MW_STATUS_CONSTRAINT_VIOLATION"
 };
 
+function showLoginModal() {
+    loginModal.style.display = 'block';
+}
+
+function hideLoginModal() {
+    loginModal.style.display = 'none';
+}
+
+async function handleLogin(event) {
+    event.preventDefault();
+    const username = loginForm.username.value;
+    const password = loginForm.password.value;
+
+    if (typeof md5 !== 'function') {
+        loginError.textContent = 'MD5 library not loaded.';
+        return;
+    }
+
+    const hashedPassword = md5(password);
+    try {
+        const response = await fetch(`${API_baseURL}?method=login&id=${username}&pass=${hashedPassword}`);
+        const data = await response.json();
+
+        if (data.status === 0) {
+            sessionStorage.setItem('isAuthenticated', 'true');
+            hideLoginModal();
+            logoutButton.style.display = 'block';
+            checkAPIStatus();
+        } else {
+            loginError.textContent = `Login failed: ${API_statusCodesMap[data.status] || 'Unknown error'}`;
+        }
+    } catch (error) {
+        loginError.textContent = 'Login request failed.';
+    }
+}
+
+async function handleLogout() {
+    try {
+        await fetch(`${API_baseURL}?method=logout`);
+    } catch (error) {
+        console.error('Logout request failed:', error);
+    } finally {
+        sessionStorage.removeItem('isAuthenticated');
+        showLoginModal();
+        logoutButton.style.display = 'none';
+        setStatus('offline');
+    }
+}
+
 function setStatus(status) {
     statusDisplay.className = '';
     let text;
@@ -71,10 +124,19 @@ function setStatus(status) {
 }
 
 async function checkAPIStatus() {
+    if (sessionStorage.getItem('isAuthenticated') !== 'true') {
+        showLoginModal();
+        return;
+    }
     try {
         const response = await fetch(`${API_baseURL}?method=ping`);
         if (response.ok) {
-            setStatus('online');
+            const data = await response.json();
+            if (data.status === 37) { // MW_STATUS_NOT_LOGGED_IN
+                handleLogout();
+            } else {
+                setStatus('online');
+            }
         } else {
             setStatus('offline');
         }
@@ -111,6 +173,9 @@ function selectSource(selectedCard) {
     selectedCard.classList.add('selected');
     const sourceId = selectedCard.dataset.source;
 }
+
+loginForm.addEventListener('submit', handleLogin);
+logoutButton.addEventListener('click', handleLogout);
 
 tabButtons.forEach(button => {
     button.addEventListener('click', () => {
