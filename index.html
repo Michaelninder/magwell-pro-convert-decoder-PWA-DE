@@ -1,3 +1,4 @@
+<!doctype html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -15,6 +16,8 @@
             padding: 10px 20px;
             border-radius: 8px;
             margin-bottom: 20px;
+            top: 16px;
+            position:sticky;
         }
 
         .status_container {
@@ -23,23 +26,23 @@
             gap: 10px;
         }
 
-        #status_display {
+        #status-display {
             padding: 5px 10px;
             border-radius: 4px;
             font-weight: bold;
         }
 
-        #status_display.online {
+        #status-display.online {
             background-color: #4CAF50;
             color: white;
         }
 
-        #status_display.offline {
+        #status-display.offline {
             background-color: #f44336;
             color: white;
         }
 
-        #status_display.unknown {
+        #status-display.unknown {
             background-color: #ff9800;
             color: white;
         }
@@ -54,15 +57,19 @@
     <main>
         <div class="info_bar">
             <div class="status_container">
-                Status: <div id="status_display" class="unknown">Unbekannt</div>
+                Status: <div id="status-display" class="unknown">Unbekannt</div>
             </div>
-            <div class="clock" id="clock_display"></div>
+            <div class="clock" id="clock-display"></div>
+        </div>
+        <div class="tab" id="signal-info-tab">
+            <h3 class="tab-title">Signalinfo</h3>
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iste quos quia, quod voluptas nemo nostrum explicabo mollitia non eos eum numquam assumenda accusantium? Pariatur eveniet molestias fuga impedit. Cumque, architecto.
         </div>
     </main>
 
     <script>
-        const statusDisplay = document.getElementById('status_display');
-        const clockDisplay = document.getElementById('clock_display');
+        const statusDisplay = document.getElementById('status-display');
+        const clockDisplay = document.getElementById('clock-display');
 
         function setStatus(status) {
             statusDisplay.className = '';
