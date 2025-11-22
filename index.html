@@ -112,6 +112,45 @@
             margin-top: 0;
             margin-bottom: 15px;
         }
+
+        .source-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .source-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .source-card:hover {
+            border-color: #007bff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .source-card.selected {
+            background-color: #e6f2ff;
+            border-color: #007bff;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .source-card h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .source-card.selected h4 {
+            color: #007bff;
+        }
     </style>
 </head>
 <body>
@@ -124,24 +163,52 @@
         </div>
 
         <div class="tabs-navigation">
-            <button data-tab="signal-info-tab" class="active">Signalinfo</button>
-            <button data-tab="another-tab">Another Tab</button>
-            <button data-tab="third-tab">Third Tab</button>
+            <button data-tab="signal-info-tab" class="active">Signal Info</button>
+            <button data-tab="source-selection-tab">Quellenauswahl</button>
+            <button data-tab="statistics-tab">Statistiken</button>
+            <button data-tab="more-tab">Mehr</button>
         </div>
 
         <div class="tab" id="signal-info-tab">
-            <h3 class="tab-title">Signalinfo</h3>
-            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iste quos quia, quod voluptas nemo nostrum explicabo mollitia non eos eum numquam assumenda accusantium? Pariatur eveniet molestias fuga impedit. Cumque, architecto.</p>
+            <h3 class="tab-title">Signal Info</h3>
+            <p>Dies ist der Inhalt für die Signal Info Registerkarte. Hier finden Sie detaillierte Informationen über die aktuellen NDI-Signale.</p>
         </div>
 
-        <div class="tab" id="another-tab">
-            <h3 class="tab-title">Another Tab</h3>
-            <p>This is the content for another tab. It's really interesting here!</p>
+        <div class="tab" id="source-selection-tab">
+            <h3 class="tab-title">Quellenauswahl</h3>
+            <p>Wählen Sie eine Quelle aus, die auf dem Beamer angezeigt werden soll.</p>
+            <div class="source-grid" id="source-grid">
+                <div class="source-card" data-source="quelle-1">
+                    <h4>Kamera 1</h4>
+                    <p>Live-Feed von Kamera 1</p>
+                </div>
+                <div class="source-card" data-source="quelle-2">
+                    <h4>Laptop NDI</h4>
+                    <p>Bildschirmübertragung vom Laptop</p>
+                </div>
+                <div class="source-card" data-source="quelle-3">
+                    <h4>Mikrofon Feed</h4>
+                    <p>Audio-Feed vom Mikrofon</p>
+                </div>
+                <div class="source-card" data-source="quelle-4">
+                    <h4>Präsentation PC</h4>
+                    <p>Folienschau vom Präsentations-PC</p>
+                </div>
+                <div class="source-card" data-source="quelle-5">
+                    <h4>Zusatzkamera</h4>
+                    <p>Perspektive der Zusatzkamera</p>
+                </div>
+            </div>
         </div>
 
-        <div class="tab" id="third-tab">
-            <h3 class="tab-title">Third Tab</h3>
-            <p>And here you find the content for the third tab. So much to explore.</p>
+        <div class="tab" id="statistics-tab">
+            <h3 class="tab-title">Statistiken</h3>
+            <p>Hier werden zukünftige Statistiken und Nutzungsdaten angezeigt.</p>
+        </div>
+
+        <div class="tab" id="more-tab">
+            <h3 class="tab-title">Mehr</h3>
+            <p>Weitere Optionen und Einstellungen finden Sie hier.</p>
         </div>
     </main>
 
@@ -150,6 +217,7 @@
         const clockDisplay = document.getElementById('clock-display');
         const tabs = document.querySelectorAll('.tab');
         const tabButtons = document.querySelectorAll('.tabs-navigation button');
+        const sourceCards = document.querySelectorAll('.source-card');
 
         function setStatus(status) {
             statusDisplay.className = '';
@@ -193,9 +261,21 @@
             }
         }
 
+        function selectSource(selectedCard) {
+            sourceCards.forEach(card => card.classList.remove('selected'));
+            selectedCard.classList.add('selected');
+            const sourceId = selectedCard.dataset.source;
+        }
+
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 showTab(button.dataset.tab);
+            });
+        });
+
+        sourceCards.forEach(card => {
+            card.addEventListener('click', () => {
+                selectSource(card);
             });
         });
 
@@ -203,7 +283,6 @@
         updateClock();
         setStatus('unknown');
 
-        // Show the default tab on load
         showTab('signal-info-tab');
     </script>
 </body>
