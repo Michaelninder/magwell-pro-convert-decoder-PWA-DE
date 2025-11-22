@@ -8,6 +8,7 @@ const loginModal = document.getElementById('login-modal');
 const loginForm = document.getElementById('login-form');
 const loginError = document.getElementById('login-error');
 const logoutButton = document.getElementById('logout-button');
+const loginButton = document.getElementById('login-button');
 
 const API_baseURL = "http://192.168.2.14/mwapi";
 const API_statusCodesMap = {
@@ -108,6 +109,7 @@ async function handleLogin(event) {
             // We'll set our own cookie to track auth state on the client side.
             setCookie('isAuthenticated', 'true', 1);
             hideLoginModal();
+            loginButton.style.display = 'none';
             logoutButton.style.display = 'block';
             checkAPIStatus();
         } else {
@@ -127,6 +129,7 @@ async function handleLogout() {
     } finally {
         eraseCookie('isAuthenticated');
         showLoginModal();
+        loginButton.style.display = 'block';
         logoutButton.style.display = 'none';
         setStatus('offline');
     }
@@ -154,8 +157,12 @@ function setStatus(status) {
 async function checkAPIStatus() {
     if (getCookie('isAuthenticated') !== 'true') {
         showLoginModal();
+        loginButton.style.display = 'block';
+        logoutButton.style.display = 'none';
         return;
     }
+    loginButton.style.display = 'none';
+    logoutButton.style.display = 'block';
     try {
         const response = await fetch(`${API_baseURL}?method=ping`);
         if (response.ok) {
@@ -203,6 +210,7 @@ function selectSource(selectedCard) {
 }
 
 loginForm.addEventListener('submit', handleLogin);
+loginButton.addEventListener('click', showLoginModal);
 logoutButton.addEventListener('click', handleLogout);
 
 tabButtons.forEach(button => {
