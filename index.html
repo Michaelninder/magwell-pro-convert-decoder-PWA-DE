@@ -6,18 +6,61 @@
     <title>NDI - Manage</title>
 
     <style>
-        .info_bar {
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .info_bar, .tabs-navigation {
             background-color: #333;
             color: #eee;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
             border-radius: 8px;
-            margin-bottom: 20px;
+            position: sticky;
+            z-index: 1000;
+        }
+
+        .info_bar {
             top: 16px;
-            position:sticky;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .tabs-navigation {
+            justify-content: flex-start;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        .tabs-navigation button {
+            background: none;
+            border: none;
+            color: #eee;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 1em;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .tabs-navigation button:hover {
+            background-color: #555;
+        }
+
+        .tabs-navigation button.active {
+            background-color: #007bff;
+            font-weight: bold;
         }
 
         .status_container {
@@ -51,6 +94,24 @@
             font-size: 1.1em;
             font-weight: bold;
         }
+
+        .tab {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .tab.shown {
+            display: block;
+        }
+
+        .tab-title {
+            color: #007bff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -61,15 +122,34 @@
             </div>
             <div class="clock" id="clock-display"></div>
         </div>
+
+        <div class="tabs-navigation">
+            <button data-tab="signal-info-tab" class="active">Signalinfo</button>
+            <button data-tab="another-tab">Another Tab</button>
+            <button data-tab="third-tab">Third Tab</button>
+        </div>
+
         <div class="tab" id="signal-info-tab">
             <h3 class="tab-title">Signalinfo</h3>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iste quos quia, quod voluptas nemo nostrum explicabo mollitia non eos eum numquam assumenda accusantium? Pariatur eveniet molestias fuga impedit. Cumque, architecto.
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iste quos quia, quod voluptas nemo nostrum explicabo mollitia non eos eum numquam assumenda accusantium? Pariatur eveniet molestias fuga impedit. Cumque, architecto.</p>
+        </div>
+
+        <div class="tab" id="another-tab">
+            <h3 class="tab-title">Another Tab</h3>
+            <p>This is the content for another tab. It's really interesting here!</p>
+        </div>
+
+        <div class="tab" id="third-tab">
+            <h3 class="tab-title">Third Tab</h3>
+            <p>And here you find the content for the third tab. So much to explore.</p>
         </div>
     </main>
 
     <script>
         const statusDisplay = document.getElementById('status-display');
         const clockDisplay = document.getElementById('clock-display');
+        const tabs = document.querySelectorAll('.tab');
+        const tabButtons = document.querySelectorAll('.tabs-navigation button');
 
         function setStatus(status) {
             statusDisplay.className = '';
@@ -98,10 +178,33 @@
             clockDisplay.textContent = `${hours}:${minutes}:${seconds}`;
         }
 
+        function showTab(tabId) {
+            tabs.forEach(tab => tab.classList.remove('shown'));
+            tabButtons.forEach(button => button.classList.remove('active'));
+
+            const activeTab = document.getElementById(tabId);
+            const activeButton = document.querySelector(`.tabs-navigation button[data-tab="${tabId}"]`);
+
+            if (activeTab) {
+                activeTab.classList.add('shown');
+            }
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                showTab(button.dataset.tab);
+            });
+        });
+
         setInterval(updateClock, 1000);
         updateClock();
-
         setStatus('unknown');
+
+        // Show the default tab on load
+        showTab('signal-info-tab');
     </script>
 </body>
 </html>
