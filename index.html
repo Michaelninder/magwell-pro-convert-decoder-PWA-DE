@@ -6,9 +6,47 @@
 
     <style>
         .info_bar {
-            background-color:black;
-            color: whitesmoke;
-            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            background-color: #333;
+            color: #eee;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .status_container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #status_display {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        #status_display.online {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #status_display.offline {
+            background-color: #f44336;
+            color: white;
+        }
+
+        #status_display.unknown {
+            background-color: #ff9800;
+            color: white;
+        }
+
+        .clock {
+            font-size: 1.1em;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -16,14 +54,47 @@
     <main>
         <div class="info_bar">
             <div class="status_container">
-                Status: <div id="status_display">Unbekannt</div>
+                Status: <div id="status_display" class="unknown">Unbekannt</div>
             </div>
-
+            <div class="clock" id="clock_display"></div>
         </div>
     </main>
 
     <script>
-        const statusDisplay = document.getElementById('status_display')
+        const statusDisplay = document.getElementById('status_display');
+        const clockDisplay = document.getElementById('clock_display');
+
+        function setStatus(status) {
+            statusDisplay.className = '';
+            let text;
+            switch (status) {
+                case 'online':
+                    statusDisplay.classList.add('online');
+                    text = 'Online';
+                    break;
+                case 'offline':
+                    statusDisplay.classList.add('offline');
+                    text = 'Offline';
+                    break;
+                default:
+                    statusDisplay.classList.add('unknown');
+                    text = 'Unbekannt';
+            }
+            statusDisplay.textContent = text;
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            clockDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        setStatus('unknown');
     </script>
 </body>
 </html>
