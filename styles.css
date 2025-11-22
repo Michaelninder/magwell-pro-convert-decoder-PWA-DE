@@ -9,7 +9,8 @@ main {
     padding: 20px;
 }
 
-.info_bar, .tabs-navigation {
+.info_bar,
+.tabs-navigation {
     background-color: #333;
     color: #eee;
     display: flex;
@@ -109,11 +110,26 @@ main {
     fill: currentColor;
 }
 
+#logout-button {
+    background-color: #f44336;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+#logout-button:hover {
+    background-color: #d32f2f;
+}
+
 .tab {
     background-color: white;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: none;
 }
 
@@ -140,12 +156,12 @@ main {
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .source-card:hover {
     border-color: #007bff;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
 
@@ -166,7 +182,6 @@ main {
     color: #007bff;
 }
 
-/* Login Modal */
 .modal {
     display: none;
     position: fixed;
@@ -176,7 +191,7 @@ main {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
@@ -187,7 +202,14 @@ main {
     width: 80%;
     max-width: 400px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.modal-content h2 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 .form-group {
@@ -197,15 +219,44 @@ main {
 .form-group label {
     display: block;
     margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
 }
 
 .form-group input {
     width: 100%;
-    padding: 8px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     box-sizing: border-box;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+#login-form button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.1em;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+#login-form button[type="submit"]:hover {
+    background-color: #0056b3;
 }
 
 .error-message {
     color: #f44336;
     margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
 }

@@ -55,6 +55,31 @@ const API_statusCodesMap = {
     41: "MW_STATUS_CONSTRAINT_VIOLATION"
 };
 
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+function eraseCookie(name) {
+    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
 function showLoginModal() {
     loginModal.style.display = 'block';
 }
@@ -79,7 +104,9 @@ async function handleLogin(event) {
         const data = await response.json();
 
         if (data.status === 0) {
-            sessionStorage.setItem('isAuthenticated', 'true');
+            // The API sets a cookie on successful login. We just need to check for it.
+            // We'll set our own cookie to track auth state on the client side.
+            setCookie('isAuthenticated', 'true', 1);
             hideLoginModal();
             logoutButton.style.display = 'block';
             checkAPIStatus();
@@ -87,7 +114,8 @@ async function handleLogin(event) {
             loginError.textContent = `Login failed: ${API_statusCodesMap[data.status] || 'Unknown error'}`;
         }
     } catch (error) {
-        loginError.textContent = 'Login request failed.';
+        console.error('Login request failed:', error);
+        loginError.textContent = 'Login request failed. Check console for details.';
     }
 }
 
@@ -97,7 +125,7 @@ async function handleLogout() {
     } catch (error) {
         console.error('Logout request failed:', error);
     } finally {
-        sessionStorage.removeItem('isAuthenticated');
+        eraseCookie('isAuthenticated');
         showLoginModal();
         logoutButton.style.display = 'none';
         setStatus('offline');
@@ -124,7 +152,7 @@ function setStatus(status) {
 }
 
 async function checkAPIStatus() {
-    if (sessionStorage.getItem('isAuthenticated') !== 'true') {
+    if (getCookie('isAuthenticated') !== 'true') {
         showLoginModal();
         return;
     }
