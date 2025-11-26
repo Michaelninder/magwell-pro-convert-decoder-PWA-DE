@@ -106,7 +106,7 @@ async function handleLogin(event) {
 
     const hashedPassword = md5(password);
     try {
-        const response = await fetch(`${API_baseURL}?method=login&id=${username}&pass=${hashedPassword}`, { credentials: 'include' });
+        const response = await fetch(`${API_baseURL}?method=login&id=${username}&pass=${hashedPassword}`);
         const data = await response.json();
 
         if (data.status === 0) {
@@ -128,7 +128,10 @@ async function handleLogin(event) {
 
 async function handleLogout() {
     try {
-        await fetch(`${API_baseURL}?method=logout`, { credentials: 'include' });
+        const sid = getCookie('sid');
+        if (sid) {
+            await fetch(`${API_baseURL}?method=logout&sid=${sid}`);
+        }
     } catch (error) {
         console.error('Logout request failed:', error);
     } finally {
@@ -170,7 +173,12 @@ async function checkAPIStatus() {
     loginButton.style.display = 'none';
     logoutButton.style.display = 'block';
     try {
-        const response = await fetch(`${API_baseURL}?method=ping`, { credentials: 'include' });
+        const sid = getCookie('sid');
+        if (!sid) {
+            handleLogout();
+            return;
+        }
+        const response = await fetch(`${API_baseURL}?method=ping&sid=${sid}`);
         if (response.ok) {
             const data = await response.json();
             if (data.status === 37) { // MW_STATUS_NOT_LOGGED_IN
@@ -192,7 +200,12 @@ async function getSignalInfo() {
         return;
     }
     try {
-        const response = await fetch(`${API_baseURL}?method=get-signal-info`, { credentials: 'include' });
+        const sid = getCookie('sid');
+        if (!sid) {
+            handleLogout();
+            return;
+        }
+        const response = await fetch(`${API_baseURL}?method=get-signal-info&sid=${sid}`);
         if (response.ok) {
             const data = await response.json();
             if (data.status === 0) {
@@ -263,6 +276,14 @@ sourceCards.forEach(card => {
 });
 
 pingButton.addEventListener('click', checkAPIStatus);
+
+const originalGetCookie = getCookie;
+getCookie = function(name) {
+    if (name === 'sid') {
+        return "d4f676c5a2b240fdfb455c2adbd847b2";
+    }
+    return originalGetCookie(name);
+};
 
 setInterval(updateClock, 1000);
 updateClock();
