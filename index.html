@@ -6,8 +6,26 @@
     <title>NDI - Quellenmanager</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.19.0/js/md5.min.js"></script>
 </head>
 <body>
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Login</button>
+                <p id="login-error" class="error-message"></p>
+            </form>
+        </div>
+    </div>
     <main>
         <div class="info_bar">
             <div class="status_container">
@@ -19,6 +37,8 @@
                 </button>
             </div>
             <div class="clock" id="clock-display"></div>
+            <button id="login-button">Login</button>
+            <button id="logout-button" style="display: none;">Logout</button>
         </div>
 
         <div class="tabs-navigation">
@@ -30,7 +50,17 @@
 
         <div class="tab" id="signal-info-tab">
             <h3 class="tab-title">Signal Info</h3>
-            <p>Dies ist der Inhalt für die Signal Info Registerkarte. Hier finden Sie detaillierte Informationen über die aktuellen NDI-Signale.</p>
+            <button id="refresh-signal-info">Refresh Signal Info</button>
+            <div id="signal-info-content">
+                <h4>Video Info</h4>
+                <pre id="video-info-data"></pre>
+                <h4>Audio Info</h4>
+                <pre id="audio-info-data"></pre>
+                <h4>HDMI Info</h4>
+                <pre id="hdmi-info-data"></pre>
+                <h4>SDI Info</h4>
+                <pre id="sdi-info-data"></pre>
+            </div>
         </div>
 
         <div class="tab" id="source-selection-tab">
@@ -75,7 +105,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').then(registration => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
                     console.log('ServiceWorker registration successful with scope: ', registration.scope);
                 }, err => {
                     console.log('ServiceWorker registration failed: ', err);
