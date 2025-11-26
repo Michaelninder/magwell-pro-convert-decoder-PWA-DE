@@ -106,7 +106,7 @@ async function handleLogin(event) {
 
     const hashedPassword = md5(password);
     try {
-        const response = await fetch(`${API_baseURL}?method=login&id=${username}&pass=${hashedPassword}`);
+        const response = await fetch(`${API_baseURL}?method=login&id=${username}&pass=${hashedPassword}`, { credentials: 'include' });
         const data = await response.json();
 
         if (data.status === 0) {
@@ -128,11 +128,12 @@ async function handleLogin(event) {
 
 async function handleLogout() {
     try {
-        await fetch(`${API_baseURL}?method=logout`);
+        await fetch(`${API_baseURL}?method=logout`, { credentials: 'include' });
     } catch (error) {
         console.error('Logout request failed:', error);
     } finally {
         eraseCookie('isAuthenticated');
+        eraseCookie('sid');
         showLoginModal();
         loginButton.style.display = 'block';
         logoutButton.style.display = 'none';
@@ -169,7 +170,7 @@ async function checkAPIStatus() {
     loginButton.style.display = 'none';
     logoutButton.style.display = 'block';
     try {
-        const response = await fetch(`${API_baseURL}?method=ping`);
+        const response = await fetch(`${API_baseURL}?method=ping`, { credentials: 'include' });
         if (response.ok) {
             const data = await response.json();
             if (data.status === 37) { // MW_STATUS_NOT_LOGGED_IN
@@ -191,7 +192,7 @@ async function getSignalInfo() {
         return;
     }
     try {
-        const response = await fetch(`${API_baseURL}?method=get-signal-info`);
+        const response = await fetch(`${API_baseURL}?method=get-signal-info`, { credentials: 'include' });
         if (response.ok) {
             const data = await response.json();
             if (data.status === 0) {
@@ -199,6 +200,8 @@ async function getSignalInfo() {
                 audioInfoData.textContent = JSON.stringify(data['audio-info'], null, 2);
                 hdmiInfoData.textContent = JSON.stringify(data['hdmi-info'], null, 2);
                 sdiInfoData.textContent = JSON.stringify(data['sdi-info'], null, 2);
+            } else if (data.status === 37) { // MW_STATUS_NOT_LOGGED_IN
+                handleLogout();
             } else {
                 videoInfoData.textContent = `Error: ${API_statusCodesMap[data.status] || 'Unknown error'}`;
             }
