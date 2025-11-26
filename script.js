@@ -9,6 +9,11 @@ const loginForm = document.getElementById('login-form');
 const loginError = document.getElementById('login-error');
 const logoutButton = document.getElementById('logout-button');
 const loginButton = document.getElementById('login-button');
+const refreshSignalInfoButton = document.getElementById('refresh-signal-info');
+const videoInfoData = document.getElementById('video-info-data');
+const audioInfoData = document.getElementById('audio-info-data');
+const hdmiInfoData = document.getElementById('hdmi-info-data');
+const sdiInfoData = document.getElementById('sdi-info-data');
 
 const API_baseURL = "http://192.168.2.14/mwapi";
 const API_statusCodesMap = {
@@ -180,6 +185,32 @@ async function checkAPIStatus() {
     }
 }
 
+async function getSignalInfo() {
+    if (getCookie('isAuthenticated') !== 'true') {
+        showLoginModal();
+        return;
+    }
+    try {
+        const response = await fetch(`${API_baseURL}?method=get-signal-info`);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.status === 0) {
+                videoInfoData.textContent = JSON.stringify(data['video-info'], null, 2);
+                audioInfoData.textContent = JSON.stringify(data['audio-info'], null, 2);
+                hdmiInfoData.textContent = JSON.stringify(data['hdmi-info'], null, 2);
+                sdiInfoData.textContent = JSON.stringify(data['sdi-info'], null, 2);
+            } else {
+                videoInfoData.textContent = `Error: ${API_statusCodesMap[data.status] || 'Unknown error'}`;
+            }
+        } else {
+            videoInfoData.textContent = 'Error fetching signal info.';
+        }
+    } catch (error) {
+        videoInfoData.textContent = 'Error fetching signal info. Check console for details.';
+        console.error('Get signal info request failed:', error);
+    }
+}
+
 function updateClock() {
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
@@ -201,6 +232,10 @@ function showTab(tabId) {
     if (activeButton) {
         activeButton.classList.add('active');
     }
+
+    if (tabId === 'signal-info-tab') {
+        getSignalInfo();
+    }
 }
 
 function selectSource(selectedCard) {
@@ -212,6 +247,7 @@ function selectSource(selectedCard) {
 loginForm.addEventListener('submit', handleLogin);
 loginButton.addEventListener('click', showLoginModal);
 logoutButton.addEventListener('click', handleLogout);
+refreshSignalInfoButton.addEventListener('click', getSignalInfo);
 
 tabButtons.forEach(button => {
     button.addEventListener('click', () => {

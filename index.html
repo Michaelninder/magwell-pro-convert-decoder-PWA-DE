@@ -50,7 +50,17 @@
 
         <div class="tab" id="signal-info-tab">
             <h3 class="tab-title">Signal Info</h3>
-            <p>Dies ist der Inhalt für die Signal Info Registerkarte. Hier finden Sie detaillierte Informationen über die aktuellen NDI-Signale.</p>
+            <button id="refresh-signal-info">Refresh Signal Info</button>
+            <div id="signal-info-content">
+                <h4>Video Info</h4>
+                <pre id="video-info-data"></pre>
+                <h4>Audio Info</h4>
+                <pre id="audio-info-data"></pre>
+                <h4>HDMI Info</h4>
+                <pre id="hdmi-info-data"></pre>
+                <h4>SDI Info</h4>
+                <pre id="sdi-info-data"></pre>
+            </div>
         </div>
 
         <div class="tab" id="source-selection-tab">
